@@ -16,7 +16,7 @@ const CONFIG = {
   /* ---- Global asset paths ----------------------------------------- */
   introSound:   "assets/intro-sound.mp3",     // optional splash "thud" (safe if missing/blocked)
   profilePhoto: "assets/profile-photo.jpg",   // her avatar (profiles screen + nav)
-  masterVideo:  "assets/master-video.mp4",    // the ONE long video every title jumps into
+  masterVideo:  "https://github.com/akshat-005/netflix-clone/releases/download/v1/master-video.mp4",
 
   /* ---- Intro timing (ms) ------------------------------------------ */
   introDurationMs: 3300,               // how long the splash lasts before the profile screen (A → beams → ARFLIX)
@@ -63,7 +63,7 @@ const titles = [
     poster: "assets/posters/before-we-met.jpg",
     tag: "Recently Added",
     previewType: "clip",
-    previewSrc: "assets/previews/video1.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/video1.mp4",
     playStart: 10
   },
   {
@@ -71,7 +71,7 @@ const titles = [
     name: "Almost Met Each Other",
     poster: "assets/posters/almost-met.jpg",
     previewType: "clip",
-    previewSrc: "assets/previews/almost-met.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/almost-met.mp4",
     playStart: 10
   },
   {
@@ -79,7 +79,7 @@ const titles = [
     name: "The Crush",
     poster: "assets/posters/the-crush.jpg",
     previewType: "clip",
-    previewSrc: "assets/previews/crush.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/crush.mp4",
     playStart: 10
   },
   {
@@ -88,7 +88,7 @@ const titles = [
     poster: "assets/posters/just-us.jpg",
     top10: true,
     previewType: "clip",
-    previewSrc: "assets/previews/just-us.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/just-us.mp4",
     playStart: 10
   },
   {
@@ -96,7 +96,7 @@ const titles = [
     name: "More of Us",
     poster: "assets/posters/more-just-us.jpg",
     previewType: "clip",
-    previewSrc: "assets/previews/more-us.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/more-us.mp4",
     playStart: 120
   },
   {
@@ -104,7 +104,7 @@ const titles = [
     name: "Having Fun Together",
     poster: "assets/posters/having-fun.jpg",
     previewType: "clip",
-    previewSrc: "assets/previews/having-fun.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/having-fun.mp4",
     playStart: 10
   },
   {
@@ -112,7 +112,7 @@ const titles = [
     name: "Virtual Moments",
     poster: "assets/posters/virtual-moments.jpeg",
     previewType: "clip",
-    previewSrc: "assets/previews/virtual-movie.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/virtual-movie.mp4",
     playStart: 10
   },
   {
@@ -120,7 +120,7 @@ const titles = [
     name: "Saath Saath",
     poster: "assets/posters/dates-2.jpg",
     previewType: "clip",
-    previewSrc: "assets/previews/saath-saath.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/saath-saath.mp4",
     playStart: 10
   },
   {
@@ -128,7 +128,7 @@ const titles = [
     name: "My beautiful",
     poster: "assets/posters/beautiful.jpg",
     previewType: "clip",
-    previewSrc: "assets/previews/beautiful.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/beautiful.mp4",
     playStart: 10
   },
   {
@@ -137,7 +137,7 @@ const titles = [
     poster: "assets/posters/prettiest.jpg",
     top10: true,
     previewType: "clip",
-    previewSrc: "assets/previews/prettiest-girl.mp4",
+    previewSrc: "https://github.com/akshat-005/netflix-clone/releases/download/v1/prettiest-girl.mp4",
     playStart: 10
   },
   {
