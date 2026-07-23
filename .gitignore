@@ -1,3 +1,6 @@
 
 assets/previews/*.mp4
 assets/master-video.mp4
+.vercel
+.vercelignore
+cdn urls
