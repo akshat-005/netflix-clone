@@ -99,6 +99,8 @@
      SCREEN 2 — PROFILES
   ================================================================== */
   function buildProfiles() {
+    $("#profilesLogo").textContent = CONFIG.brand || CONFIG.name;
+
     const grid = $("#profilesGrid");
     grid.innerHTML = "";
 

@@ -206,6 +206,17 @@ img { display: block; }
   background: #141414;
   z-index: 40;
 }
+/* Brand wordmark, top-left corner (mirrors Netflix's logo placement) */
+.profiles-logo {
+  position: absolute;
+  top: clamp(1rem, 3vh, 2.2rem);
+  left: clamp(1rem, 4vw, 3.2rem);
+  font-family: "Bebas Neue", Impact, sans-serif;
+  color: var(--red);
+  font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+  letter-spacing: 2px;
+  line-height: 1;
+}
 .profiles-title {
   font-size: clamp(1.8rem, 5vw, 3.5rem);
   font-weight: 400;
@@ -216,10 +227,13 @@ img { display: block; }
   list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: clamp(1rem, 4vw, 2.5rem);
+  gap: clamp(1.2rem, 3vw, 2.5rem);
   justify-content: center;
+  align-items: flex-start;
   padding: 0 1rem;
-  max-width: 900px;
+  /* wide enough that all profiles + "Add Profile" sit on ONE row on
+     desktop; still wraps gracefully on narrow screens */
+  max-width: 1200px;
 }
 .profile {
   display: flex;
@@ -232,8 +246,8 @@ img { display: block; }
 }
 .profile:hover, .profile:focus-visible { opacity: 1; transform: translateY(-4px); outline: none; }
 .profile-avatar {
-  width: clamp(80px, 16vw, 150px);
-  height: clamp(80px, 16vw, 150px);
+  width: clamp(96px, 15vw, 190px);
+  height: clamp(96px, 15vw, 190px);
   border-radius: 8px;
   object-fit: cover;
   border: 3px solid transparent;

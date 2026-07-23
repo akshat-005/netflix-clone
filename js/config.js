@@ -11,7 +11,7 @@
 const CONFIG = {
   /* ---- Branding --------------------------------------------------- */
   brand: "ARFLIX",                     // the Netflix-style wordmark (intro splash + nav logo)
-  name:  "ARCHI",                      // the person (used in hero + her profile)
+  name:  "Archi",                      // the person (used in hero + her profile)
 
   /* ---- Global asset paths ----------------------------------------- */
   introSound:   "assets/intro-sound.mp3",     // optional splash "thud" (safe if missing/blocked)
@@ -36,10 +36,10 @@ const CONFIG = {
   /* ---- Profiles ("Who's watching?") ------------------------------- */
   /* The first one (isMain:true) opens the site. The rest are jokes. */
   profiles: [
-    { name: "Archi",  photo: "assets/profile-photo.jpg", isMain: true },
+    { name: "Us",  photo: "assets/profile-photo.jpg", isMain: true },
     { name: "Guest",  color: "#5b8def", easterEgg: "Nice try 😏 This one's private." },
     { name: "Kids",   color: "#e6b800", easterEgg: "Not yet, abhi time hai isme ;)" },
-    { name: "Life",     color: "#7a7a7a", easterEgg: "Itni jaldi kya hai, one day at a time gudda :))" }
+    { name: "Life",     color: "#fee122", easterEgg: "Itni jaldi kya hai, one day at a time gudda :))" }
   ]
 };
 
