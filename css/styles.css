@@ -1,0 +1,805 @@
+/* =====================================================================
+   Netflix-style Birthday Site — styles
+   Theme: pure black, Netflix red (#E50914), white text.
+===================================================================== */
+
+:root {
+  --red: #E50914;
+  --red-hover: #f6121d;
+  --black: #000;
+  --text: #fff;
+  --muted: #b3b3b3;
+  --card-radius: 4px;
+  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: var(--black);
+  color: var(--text);
+  font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+img { display: block; }
+
+.display {
+  font-family: "Bebas Neue", Impact, system-ui, sans-serif;
+  letter-spacing: 2px;
+}
+
+/* ---------- Screen system: only one visible at a time -------------- */
+.screen {
+  position: fixed;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.6s var(--ease);
+}
+.screen.is-active { opacity: 1; visibility: visible; }
+
+/* #screen-browse scrolls, so it becomes position:static when active */
+#screen-browse.is-active {
+  position: static;
+  min-height: 100vh;
+}
+
+/* =====================================================================
+   SCREEN 1 — INTRO SPLASH
+===================================================================== */
+#screen-intro {
+  display: grid;
+  place-items: center;
+  background: #000;
+  z-index: 50;
+  overflow: hidden;
+}
+.intro-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+/* --- The opening "A" ------------------------------------------------ */
+.intro-letter,
+.intro-word {
+  position: absolute;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  color: var(--red);
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  will-change: transform, opacity, filter;
+}
+.intro-letter {
+  font-size: clamp(5rem, 30vw, 22rem);
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: scale(0.15);
+}
+.intro-letter.animate {
+  animation: letterIn 0.5s var(--ease) forwards;   /* lands just before the boom */
+}
+@keyframes letterIn {
+  0%   { opacity: 0; transform: scale(0.15); filter: blur(8px); text-shadow: 0 0 0 rgba(229,9,20,0); }
+  70%  { opacity: 1; transform: scale(1.06); filter: blur(0);   text-shadow: 0 0 40px rgba(229,9,20,0.85); }
+  100% { opacity: 1; transform: scale(1);    text-shadow: 0 0 30px rgba(229,9,20,0.7); } /* holds, waiting for the burst */
+}
+/* Added on the "tudum" boom — the "A" blows apart into the beams */
+.intro-letter.burst {
+  animation: letterBurst 0.45s var(--ease) forwards;
+}
+@keyframes letterBurst {
+  0%   { opacity: 1; transform: scale(1);   filter: blur(0); }
+  100% { opacity: 0; transform: scale(1.7); filter: blur(7px); text-shadow: 0 0 130px rgba(255,255,255,0.95); }
+}
+
+/* --- The ribbon beams of light ------------------------------------- */
+.beams {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.beam {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--w, 8px);
+  height: 130vh;                       /* tall ribbons that overshoot the screen */
+  border-radius: 999px;
+  /* bright in the middle, fading to transparent at the ends = beam of light */
+  background: linear-gradient(180deg,
+      transparent 0%,
+      var(--c) 30%,
+      #fff 50%,
+      var(--c) 70%,
+      transparent 100%);
+  opacity: 0;
+  transform: translate(-50%, -50%) scaleY(0.15);
+  filter: blur(3px) brightness(1.6);
+  mix-blend-mode: screen;              /* beams add light where they overlap */
+  will-change: transform, opacity;
+}
+.beam.animate {
+  animation: beamOut 1.6s var(--ease) forwards;
+  animation-delay: var(--d, 0s);
+}
+@keyframes beamOut {
+  0%   { opacity: 0;   transform: translate(-50%, -50%) translateX(0) scaleY(0.1);  filter: blur(10px) brightness(2.4); }
+  25%  { opacity: 1; }
+  55%  { opacity: 1;   transform: translate(-50%, -50%) translateX(var(--x)) scaleY(1); filter: blur(2px) brightness(1.7); }
+  80%  { opacity: 0.85; }
+  100% { opacity: 0;   transform: translate(-50%, -50%) translateX(var(--x)) scaleY(1.05); filter: blur(6px) brightness(1); }
+}
+
+/* --- The resolved ARFLIX wordmark ---------------------------------- */
+.intro-word {
+  font-size: clamp(3rem, 16vw, 12rem);
+  letter-spacing: 4px;
+  opacity: 0;
+  transform: scale(0.85);
+  text-shadow: 0 0 30px rgba(229,9,20,0.5);
+}
+.intro-word.animate {
+  animation: wordIn 1.2s var(--ease) forwards;
+}
+@keyframes wordIn {
+  0%   { opacity: 0; transform: scale(0.85); filter: blur(6px); }
+  35%  { opacity: 1; transform: scale(1.03); filter: blur(0); text-shadow: 0 0 80px rgba(255,255,255,0.5), 0 0 30px rgba(229,9,20,0.9); }
+  60%  { transform: scale(1); }
+  100% { opacity: 1; transform: scale(1); text-shadow: 0 0 26px rgba(229,9,20,0.6); } /* holds; the screen crossfade exits */
+}
+
+/* One-tap gate — only shown if the browser blocks audio autoplay */
+.intro-gate {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+  color: #fff;
+  cursor: pointer;
+}
+.intro-gate-play {
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+  padding-left: 5px;                     /* optical centering of the play triangle */
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  animation: gatePulse 1.8s ease-out infinite;
+}
+.intro-gate-hint {
+  margin-top: 1.3rem;
+  color: var(--muted);
+  letter-spacing: 3px;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+@keyframes gatePulse {
+  0%   { box-shadow: 0 0 0 0 rgba(229,9,20,0.55); }
+  100% { box-shadow: 0 0 0 28px rgba(229,9,20,0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-letter.animate, .beam.animate, .intro-word.animate { animation-duration: 0.6s; }
+}
+
+/* =====================================================================
+   SCREEN 2 — PROFILES
+===================================================================== */
+#screen-profiles {
+  display: grid;
+  place-items: center;
+  background: #141414;
+  z-index: 40;
+}
+.profiles-title {
+  font-size: clamp(1.8rem, 5vw, 3.5rem);
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 2.2rem;
+}
+.profiles-grid {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(1rem, 4vw, 2.5rem);
+  justify-content: center;
+  padding: 0 1rem;
+  max-width: 900px;
+}
+.profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
+}
+.profile:hover, .profile:focus-visible { opacity: 1; transform: translateY(-4px); outline: none; }
+.profile-avatar {
+  width: clamp(80px, 16vw, 150px);
+  height: clamp(80px, 16vw, 150px);
+  border-radius: 8px;
+  object-fit: cover;
+  border: 3px solid transparent;
+  background: #333;
+  transition: border-color 0.2s var(--ease);
+  overflow: hidden;
+}
+.profile-avatar svg { display: block; width: 100%; height: 100%; }
+.profile:hover .profile-avatar, .profile:focus-visible .profile-avatar { border-color: #fff; }
+
+/* "Add Profile" tile — grey circle with a plus, like Netflix */
+.profile.add .profile-avatar {
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  display: grid;
+  place-items: center;
+  color: #808080;
+  transition: color 0.2s var(--ease);
+}
+.profile.add:hover .profile-avatar { color: #fff; }
+.profile-name { color: var(--muted); font-size: clamp(0.9rem, 2.5vw, 1.3rem); }
+.profile:hover .profile-name { color: #fff; }
+
+.toast {
+  position: fixed;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(20,20,20,0.95);
+  border: 1px solid #333;
+  border-left: 4px solid var(--red);
+  padding: 0.9rem 1.4rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* =====================================================================
+   SCREEN 3 — BROWSE
+===================================================================== */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem clamp(1rem, 4vw, 3.5rem);
+  background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+  transition: background-color 0.4s var(--ease);
+}
+.nav.scrolled { background: #141414; }
+.nav-left { display: flex; align-items: center; gap: clamp(1rem, 2.5vw, 2.2rem); min-width: 0; }
+.nav-logo {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  color: var(--red);
+  font-size: clamp(1.5rem, 3.2vw, 2.1rem);
+  letter-spacing: 2px;
+  line-height: 1;
+  flex: 0 0 auto;
+}
+.nav-links { display: flex; align-items: center; gap: 1.15rem; }
+.nav-link {
+  color: #e5e5e5;
+  font-size: 0.88rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s;
+}
+.nav-link:hover { color: var(--muted); }
+.nav-link.is-active { font-weight: 700; color: #fff; }
+
+.nav-right { display: flex; align-items: center; gap: clamp(0.7rem, 1.6vw, 1.3rem); }
+.nav-icon { color: #fff; display: grid; place-items: center; opacity: 0.95; }
+.nav-icon:hover { opacity: 0.7; }
+.nav-profile { display: flex; align-items: center; gap: 0.4rem; cursor: pointer; }
+.nav-caret { color: #fff; }
+.nav-avatar {
+  width: 32px; height: 32px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #333;
+  display: block;
+  flex: 0 0 auto;
+}
+.nav-avatar img, .nav-avatar svg { width: 100%; height: 100%; display: block; object-fit: cover; }
+
+/* Collapse the long link list on smaller screens, like Netflix does */
+@media (max-width: 900px) {
+  .nav-links .nav-link:nth-child(n+4) { display: none; }
+}
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  height: 85vh;
+  min-height: 480px;
+  background-size: cover;
+  background-position: center 20%;
+  display: flex;
+  align-items: flex-end;
+}
+.hero-fade {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.2) 45%, rgba(0,0,0,0) 70%),
+    linear-gradient(0deg, #000 0%, rgba(0,0,0,0.3) 25%, rgba(0,0,0,0) 55%);
+}
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 0 clamp(1rem, 4vw, 3.5rem) clamp(3rem, 12vh, 9rem);
+  max-width: 640px;
+}
+.hero-title {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(2.5rem, 8vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: 1px;
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+}
+.hero-blurb {
+  font-size: clamp(0.95rem, 1.6vw, 1.2rem);
+  line-height: 1.4;
+  margin-bottom: 1.4rem;
+  text-shadow: 0 1px 8px rgba(0,0,0,0.8);
+  max-width: 32em;
+}
+.hero-buttons { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1.8rem;
+  border-radius: 5px;
+  font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+  font-weight: 700;
+  transition: transform 0.1s, background-color 0.2s, opacity 0.2s;
+}
+.btn:active { transform: scale(0.97); }
+.btn-play { background: #fff; color: #000; }
+.btn-play:hover { background: rgba(255,255,255,0.78); }
+.btn-info { background: rgba(109,109,110,0.7); color: #fff; }
+.btn-info:hover { background: rgba(109,109,110,0.5); }
+
+/* Rows */
+.rows {
+  position: relative;
+  z-index: 3;
+  margin-top: -8vh;             /* pull first row up over the hero fade */
+  /* extra bottom room so the LAST row's hover popup (which drops below
+     the card) has somewhere to expand instead of being cut at page end */
+  padding-bottom: 14rem;
+}
+.row { margin: 2.4rem 0; }
+
+/* Row header: title on the left, scroll-progress dashes on the right */
+.row-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0 clamp(1rem, 4vw, 3.5rem) 0.6rem;
+}
+.row-title {
+  font-size: clamp(1rem, 1.4vw, 1.4rem);
+  font-weight: 700;
+  color: #e5e5e5;
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  cursor: pointer;
+}
+.row-title .explore {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #54b9c5;
+  opacity: 0;
+  transform: translateX(-8px);
+  transition: opacity 0.25s, transform 0.25s;
+  white-space: nowrap;
+}
+.row:hover .row-title .explore { opacity: 1; transform: translateX(0); }
+
+.row-progress { display: flex; gap: 2px; flex: 0 0 auto; opacity: 0; transition: opacity 0.25s; }
+.row:hover .row-progress { opacity: 1; }
+.row-progress i { width: 12px; height: 2px; background: #4d4d4d; }
+.row-progress i.on { background: #aaa; }
+
+/* Row body: arrows flank the scrollable track */
+.row-body { position: relative; }
+.row-track {
+  display: flex;
+  gap: 0.5rem;
+  overflow-x: auto;
+  /* overflow-y MUST be hidden (not visible): on a horizontally-scrolling
+     element the spec coerces `visible` to `auto`, which would add a
+     vertical scrollbar to every row once the hover popup drops below a
+     card. The big top/bottom padding gives the enlarged popup + its
+     drop-down info panel room to expand into without being clipped, and
+     the matching negative margin cancels that padding so row spacing is
+     completely unchanged. */
+  overflow-y: hidden;
+  padding: 48px clamp(1rem, 4vw, 3.5rem) 230px;
+  margin: -48px 0 -230px;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+.row-track::-webkit-scrollbar { display: none; }
+
+.row-arrow {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: clamp(1rem, 4vw, 3.5rem);
+  z-index: 12;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgba(0,0,0,0.55);
+  opacity: 0;
+  transition: opacity 0.2s, background 0.2s;
+}
+.row-arrow.left  { left: 0; }
+.row-arrow.right { right: 0; }
+.row-body:hover .row-arrow { opacity: 1; }
+.row-arrow:hover { background: rgba(0,0,0,0.8); }
+.row-arrow svg { transition: transform 0.15s; }
+.row-arrow:hover svg { transform: scale(1.35); }
+.row-arrow[hidden] { display: none; }
+@media (hover: none) { .row-arrow { display: none; } }
+
+.card {
+  position: relative;
+  flex: 0 0 auto;
+  width: clamp(150px, 20vw, 260px);
+  aspect-ratio: 16 / 9;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  background: #222;
+  cursor: pointer;
+  transition: transform 0.3s var(--ease), z-index 0s;
+  transform-origin: center;
+}
+.card img, .card video {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  border-radius: inherit;    /* keep media corners rounded when the card lets the panel overflow */
+}
+.card video { opacity: 0; transition: opacity 0.3s; }
+.card.previewing.has-video video { opacity: 1; }
+
+/* Loading shimmer for posters */
+.card .shimmer {
+  position: absolute; inset: 0;
+  background: linear-gradient(100deg, #1a1a1a 30%, #2b2b2b 50%, #1a1a1a 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.3s infinite linear;
+}
+@keyframes shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.card img.loaded + .shimmer { display: none; }
+
+/* When a card previews it becomes a floating popup: media on top,
+   solid info panel dropping down below (see .card-overlay). Let the
+   panel spill out of the card and lift it above its neighbours. */
+.card.previewing {
+  overflow: visible;
+  z-index: 20;
+  border-radius: 6px 6px 0 0;
+}
+
+/* Desktop hover-enlarge */
+@media (hover: hover) and (pointer: fine) {
+  .card.previewing {
+    transform: scale(1.42);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.65);
+  }
+  /* Edge cards grow inward so the popup never clips at the row ends */
+  .row-track .card:first-child { transform-origin: left center; }
+  .row-track .card:last-child  { transform-origin: right center; }
+}
+/* Mobile tap-preview uses the same class, gentler scale */
+.card.previewing.touch { transform: scale(1.06); }
+
+/* ---- Static poster furniture (makes a photo read as cover art) ---- */
+
+/* Small brand mark, top-left — our "N" */
+.card-brand {
+  position: absolute;
+  top: 7px; left: 8px;
+  z-index: 3;
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1;
+  color: var(--red);
+  letter-spacing: 1px;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+  transition: opacity 0.25s;
+}
+
+/* TOP 10 badge, top-right */
+.card-top10 {
+  position: absolute;
+  top: 0; right: 8px;
+  z-index: 3;
+  width: 26px;
+  padding: 3px 0 4px;
+  background: var(--red);
+  border-radius: 0 0 3px 3px;
+  text-align: center;
+  font-size: 0.42rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.6);
+  transition: opacity 0.25s;
+}
+.card-top10 b { display: block; font-size: 0.78rem; letter-spacing: 0; }
+
+/* Bottom scrim + title, so every card looks like designed artwork */
+.card-scrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 2;
+  padding: 1.6rem 0.6rem 0.55rem;
+  background: linear-gradient(0deg, rgba(0,0,0,0.92) 8%, rgba(0,0,0,0.55) 45%, rgba(0,0,0,0) 100%);
+  transition: opacity 0.25s;
+}
+.card-tag {
+  display: inline-block;
+  margin-bottom: 0.3rem;
+  padding: 1px 5px;
+  border-radius: 2px;
+  background: var(--red);
+  font-size: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+.card-name {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: clamp(0.95rem, 1.5vw, 1.35rem);
+  line-height: 1.05;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.95);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+/* The static furniture steps aside once the preview takes over */
+.card.previewing .card-scrim,
+.card.previewing .card-brand,
+.card.previewing .card-top10 { opacity: 0; }
+
+/* ---- Hover info panel: solid card that drops BELOW the media ------ */
+/* This is the Netflix trick — the clip stays fully visible up top and
+   the controls/metadata get their own clean, opaque strip underneath. */
+.card-overlay {
+  position: absolute;
+  top: 100%;                 /* flush under the 16:9 media, not over it */
+  left: 0; right: 0;
+  z-index: 4;
+  padding: 0.65rem 0.7rem 0.75rem;
+  background: #181818;
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.65);
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.2s var(--ease), transform 0.2s var(--ease);
+  pointer-events: none;
+}
+.card.previewing .card-overlay {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.overlay-title {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #fff;
+  margin-bottom: 0.45rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.overlay-actions { display: flex; align-items: center; gap: 0.4rem; margin-bottom: 0.5rem; }
+.card-icon {
+  width: 22px; height: 22px;
+  flex: 0 0 auto;
+  border: 1.5px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: rgba(42,42,42,0.6);
+  color: #fff;
+  transition: border-color 0.15s, background 0.15s, transform 0.15s;
+}
+.card-icon.play { background: #fff; color: #000; border-color: #fff; }
+.card-icon.play:hover { background: rgba(255,255,255,0.75); }
+.card-icon:hover { border-color: #fff; transform: scale(1.12); }
+.card-icon.mute { margin-left: auto; }   /* mute + expand sit on the right, like Netflix */
+.overlay-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.52rem;
+  color: #ddd;
+  white-space: nowrap;
+}
+.overlay-meta .match { color: #46d369; font-weight: 700; }
+.overlay-meta .chip {
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 0 3px;
+  border-radius: 2px;
+  font-size: 0.48rem;
+}
+
+/* =====================================================================
+   SCREEN 4 — PLAYER
+===================================================================== */
+.player {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: #000;
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.92);
+  transform-origin: center;
+  transition: opacity 0.35s var(--ease), transform 0.35s var(--ease), visibility 0.35s;
+}
+.player.open { opacity: 1; visibility: visible; transform: scale(1); }
+.player.hide-cursor { cursor: none; }
+.player-video { width: 100%; height: 100%; object-fit: contain; background: #000; }
+
+.player-spinner {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 54px; height: 54px;
+  margin: -27px 0 0 -27px;
+  border: 4px solid rgba(255,255,255,0.2);
+  border-top-color: var(--red);
+  border-radius: 50%;
+  animation: spin 0.9s linear infinite;
+  display: none;
+}
+.player.buffering .player-spinner { display: block; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.player-close {
+  position: absolute;
+  top: 1.4rem; left: 1.4rem;
+  z-index: 4;
+  color: #fff;
+  background: rgba(0,0,0,0.4);
+  border-radius: 50%;
+  width: 46px; height: 46px;
+  display: grid; place-items: center;
+  transition: background 0.2s, opacity 0.3s;
+}
+.player-close:hover { background: rgba(0,0,0,0.7); }
+
+.player-heading {
+  position: absolute;
+  top: 1.6rem; left: 5rem;
+  z-index: 3;
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  letter-spacing: 1px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+  transition: opacity 0.3s;
+}
+
+/* Controls */
+.player-controls {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  z-index: 3;
+  padding: 1rem clamp(1rem, 3vw, 2.5rem) 1.2rem;
+  background: linear-gradient(0deg, rgba(0,0,0,0.85), rgba(0,0,0,0));
+  transition: opacity 0.3s;
+}
+.player.hide-ui .player-controls,
+.player.hide-ui .player-close,
+.player.hide-ui .player-heading { opacity: 0; pointer-events: none; }
+
+.scrubber {
+  position: relative;
+  height: 5px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 3px;
+  cursor: pointer;
+  margin-bottom: 0.9rem;
+}
+.scrubber:hover { height: 7px; }
+.scrubber-buffered {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: rgba(255,255,255,0.45);
+  border-radius: 3px;
+}
+.scrubber-filled {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0%;
+  background: var(--red);
+  border-radius: 3px;
+}
+.scrubber-knob {
+  position: absolute; top: 50%;
+  left: 0;
+  width: 14px; height: 14px;
+  background: var(--red);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.15s;
+}
+.scrubber:hover .scrubber-knob { transform: translate(-50%, -50%) scale(1); }
+
+.controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.controls-left, .controls-right { display: flex; align-items: center; gap: clamp(0.6rem, 1.5vw, 1.2rem); }
+.ctrl-btn {
+  color: #fff;
+  display: grid; place-items: center;
+  transition: transform 0.1s, opacity 0.2s;
+  opacity: 0.9;
+}
+.ctrl-btn:hover { transform: scale(1.15); opacity: 1; }
+
+.volume { display: flex; align-items: center; gap: 0.4rem; }
+.volume-slider {
+  width: 0;
+  opacity: 0;
+  transition: width 0.25s var(--ease), opacity 0.25s;
+  accent-color: #fff;
+  cursor: pointer;
+}
+.volume:hover .volume-slider { width: 80px; opacity: 1; }
+
+.time { font-size: 0.85rem; color: #ddd; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.player-name {
+  font-size: 0.9rem; color: #ddd;
+  max-width: 22vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .player-heading { left: 4.6rem; top: 1.4rem; }
+  .player-name { display: none; }
+  .volume:hover .volume-slider { width: 56px; }
+}
